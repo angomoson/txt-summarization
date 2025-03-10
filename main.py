@@ -30,7 +30,9 @@ df = DatasetDict({
     "test": test_dataset
 })
 
+# Create my custom tokenizer and save the Tokenizer
 hf_tokenizer = my_tokenizer(dataset_list)
+hf_tokenizer.save_pretrained("./tokenizer_out")
 
 # test tokinizer
 
