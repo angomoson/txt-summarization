@@ -2,10 +2,14 @@ import pandas as pd
 from datasets import Dataset, DatasetDict
 from transformers import TrainingArguments, Trainer
 from transformers import AutoModelForSeq2SeqLM
+import torch
 
 from my_tokenizer import my_tokenizer
-from train_test_split import train_test_split, combine_dataset
+from train_test_split import train_test, combine_dataset
 from train import preprocess_function 
+
+# Check if CUDA is available
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Read csv
 dataset = pd.read_csv('fixed_dataset.csv')
@@ -13,7 +17,7 @@ dataset = pd.read_csv('fixed_dataset.csv')
 dataset_list = combine_dataset(dataset)
 
 # Divide dataset
-train_df, val_df, test_df = train_test_split(dataset)
+train_df, val_df, test_df = train_test(dataset)
 
 train_dataset = Dataset.from_pandas(train_df)
 val_dataset = Dataset.from_pandas(val_df)
@@ -40,20 +44,25 @@ df_source = df.map(preprocess_function, batched=True, fn_kwargs={'hf_tokenizer':
 
 # Training configuration
 training_args = TrainingArguments(
-    output_dir='/content',
+    output_dir='./model_out',
     per_device_train_batch_size=2,
     num_train_epochs=2,
-    remove_unused_columns=True
+    remove_unused_columns=True,
+    fp16=torch.cuda.is_available()
 )
 
 model_name = "facebook/mbart-large-50"
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
+# Move model to GPU if available
+model.to(device)
+
 trainer = Trainer(
     model = model,
     args = training_args,
     train_dataset = df_source['train'],
-    eval_dataset = df_source['test']
+    eval_dataset = df_source['test'],
+    fp16=torch.cuda.is_available()  # Use mixed precision if CUDA is available
 )
 
 if __name__ == "__main__":
