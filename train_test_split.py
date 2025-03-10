@@ -15,7 +15,7 @@ def combine_dataset(dataset):
 
     return dataset_list
 
-def train_test_split(dataset):
+def train_test(dataset):
     """_summary_
 
     Args:
