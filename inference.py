@@ -1,8 +1,8 @@
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-tokenizer_path = '' # provide upto the model parent dir
-model_path = '' # provide upto the model parent dir
+tokenizer_path = './tokenizer_out' # provide upto the model parent dir
+model_path = './model_out' # provide upto the model parent dir
 
 # Load model
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)

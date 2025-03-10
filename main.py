@@ -30,7 +30,6 @@ df = DatasetDict({
     "test": test_dataset
 })
 
-# Create my custom tokenizer
 hf_tokenizer = my_tokenizer(dataset_list)
 
 # test tokinizer
@@ -62,7 +61,6 @@ trainer = Trainer(
     args = training_args,
     train_dataset = df_source['train'],
     eval_dataset = df_source['test'],
-    fp16=torch.cuda.is_available()  # Use mixed precision if CUDA is available
 )
 
 if __name__ == "__main__":
